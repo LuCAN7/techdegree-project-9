@@ -1,0 +1,17 @@
+{
+  "development": {
+    "database": "fsjstd-restapi",
+
+    "dialect": "sqlite"
+  },
+  "test": {
+    "database": "database_test",
+
+    "dialect": "mysql"
+  },
+  "production": {
+    "database": "database_production",
+
+    "dialect": "mysql"
+  }
+}
