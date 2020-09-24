@@ -7,11 +7,11 @@
   "test": {
     "database": "database_test",
 
-    "dialect": "mysql"
+    "dialect": "sqlite"
   },
   "production": {
     "database": "database_production",
 
-    "dialect": "mysql"
+    "dialect": "sqlite"
   }
 }

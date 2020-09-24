@@ -2,7 +2,7 @@
 
 // load modules
 const express = require('express');
-const sequelize = require('sequelize');
+// const Sequelize = require('sequelize');
 const morgan = require('morgan');
 
 // variable to enable global error logging
@@ -18,7 +18,7 @@ app.use(morgan('dev'));
 // TODO setup your api routes here
 
 // setup a friendly greeting for the root route
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   res.json({
     message: 'Welcome to the REST API project!',
   });
