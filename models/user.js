@@ -9,6 +9,7 @@ module.exports = (sequelize) => {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
       },
       firstName: {
         type: DataTypes.STRING,
@@ -30,7 +31,17 @@ module.exports = (sequelize) => {
     }
   );
 
+  User.associate = (models) => {
+    User.hasMany(models.Course, {
+      as: 'student', // alias
+      foreignKey: {
+        fieldName: 'userId',
+        allowNull: false,
+      },
+    });
+  };
+
   // the defined model is the class itself
-  console.log(User === sequelize.models.User); // true
+  // console.log(User === sequelize.models.User); // true
   return User;
 };
