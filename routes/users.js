@@ -13,8 +13,8 @@ router.get('/', async (req, res, next) => {
 });
 
 router.post('/', async (req, res, next) => {
-  const { firstName, lastName, emailAddress, password } = req.body;
   try {
+    const { firstName, lastName, emailAddress, password } = req.body;
     const user = await User.create({
       firstName,
       lastName,

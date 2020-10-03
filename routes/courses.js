@@ -23,12 +23,28 @@ router.get('/', async (req, res, next) => {
     });
     res.json(courses);
     res.status(200);
+    next();
   } catch (error) {
     console.log('Something went wrong!', error);
   }
 });
 
-// router.get('/courses/:id', async (req, res, next) => {});
+router.get('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const course = await Course.findOne({
+      where: { id: id },
+      include: [
+        {
+          model: User,
+        },
+      ],
+    });
+    console.log(course);
+  } catch (error) {
+    console.error('Unable to get the course with that :id', error);
+  }
+});
 // router.post('/courses', async (req, res, next) => {});
 // router.put('/courses/:id', async (req, res, next) => {
 // Change everyone without a last name to "Doe"

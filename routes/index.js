@@ -7,7 +7,6 @@ router.get('/', (req, res, next) => {
   res.json({
     message: 'Welcome to the REST API project!',
   });
-  // res.redirect('/api');
 });
 
 module.exports = router;
