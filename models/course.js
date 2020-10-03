@@ -1,55 +1,55 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const Sequelize = require('sequelize');
+const sequelize = require('../db');
 
-module.exports = (sequelize) => {
-  class Course extends Sequelize.Model {}
-
-  Course.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      title: {
-        type: DataTypes.STRING,
-      },
-      description: {
-        type: DataTypes.TEXT,
-      },
-      estimatedTime: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      materialsNeeded: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      userId: {
-        type: Sequelize.INTEGER,
-        onDelete: 'CASCADE',
-        references: {
-          model: 'Users',
-          key: 'id',
-          as: 'userId',
-        },
-      },
+const Course = sequelize.define(
+  'course',
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: true,
     },
-    {
-      // Other model options go here
-      sequelize, // We need to pass the connection instance
-      modelName: 'Course', // We need to choose the model name
-    }
-  );
+    // userId: {
+    //   type: Sequelize.INTEGER,
+    //   onDelete: 'CASCADE',
+    //   references: {
+    //     model: 'Users',
+    //     key: 'id',
+    //     as: 'userId',
+    //   },
+    // },
+    title: {
+      type: Sequelize.STRING,
+    },
+    description: {
+      type: Sequelize.TEXT,
+    },
+    estimatedTime: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    materialsNeeded: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+  },
+  {
+    // Other model options go here
+    sequelize, // We need to pass the connection instance
+    modelName: 'Course', // We need to choose the model name
+  }
+);
 
-  Course.associate = (models) => {
-    Course.belongsTo(models.User, {
-      as: 'student', // alias
-      foreignKey: {
-        fieldName: 'userId',
-        allowNull: false,
-      },
-    });
-  };
+// Course.associate = (models) => {
+//   Course.belongsTo(sequelize.User, {
+//     // as: 'userId', // alias
+//     foreignKey: {
+//       fieldName: 'userId',
+//       allowNull: false,
+//     },
+//   });
+// };
+// Course.belongsTo(User, { foreignKey: 'userId' });
 
-  return Course;
-};
+module.exports = Course;

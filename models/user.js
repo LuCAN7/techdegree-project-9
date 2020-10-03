@@ -1,47 +1,44 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const Sequelize = require('sequelize');
+const sequelize = require('../db');
+// const Course = require('./course');
+// sequelize.models.User
 
-module.exports = (sequelize) => {
-  class User extends Sequelize.Model {}
-
-  User.init(
-    {
-      // Model attributes are defined here
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      firstName: {
-        type: DataTypes.STRING,
-      },
-      lastName: {
-        type: DataTypes.STRING,
-      },
-      emailAddress: {
-        type: DataTypes.STRING,
-      },
-      password: {
-        type: DataTypes.STRING,
-      },
+const User = sequelize.define(
+  'user',
+  {
+    // Model attributes are defined here
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: true,
     },
-    {
-      // Other model options go here
-      sequelize, // We need to pass the connection instance
-      modelName: 'User', // We need to choose the model name
-    }
-  );
+    firstName: {
+      type: Sequelize.STRING,
+    },
+    lastName: {
+      type: Sequelize.STRING,
+    },
+    emailAddress: {
+      type: Sequelize.STRING,
+    },
+    password: {
+      type: Sequelize.STRING,
+    },
+  },
+  {
+    // Other model options go here
+    sequelize, // We need to pass the connection instance
+    modelName: 'User', // We need to choose the model name
+  }
+);
 
-  User.associate = (models) => {
-    User.hasMany(models.Course, {
-      as: 'student', // alias
-      foreignKey: {
-        fieldName: 'userId',
-        allowNull: false,
-      },
-    });
-  };
+// User.associate = (models) => {
+//    User.hasMany(sequelize.Course);
+// };
 
-  // the defined model is the class itself
-  // console.log(User === sequelize.models.User); // true
-  return User;
-};
+// User.hasMany(models.Course);
+
+// the defined model is the class itself
+// console.log(User === sequelize.models.User); // true
+module.exports = User;

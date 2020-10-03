@@ -2,8 +2,16 @@
 
 // load modules
 const express = require('express');
-// const Sequelize = require('sequelize');
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
+// const Sequelize = require('sequelize');
+const sequelize = require('./db');
+const User = require('./models/user');
+const Course = require('./models/course');
+
+const routes = require('./routes/index');
+const userRoutes = require('./routes/users');
+const courseRoutes = require('./routes/courses');
 
 // variable to enable global error logging
 const enableGlobalErrorLogging =
@@ -12,17 +20,50 @@ const enableGlobalErrorLogging =
 // create the Express app
 const app = express();
 
+// set our port
+app.set('port', process.env.PORT || 5000);
+
 // setup morgan which gives us http request logging
 app.use(morgan('dev'));
+app.use(bodyParser.json());
+
+sequelize
+  .authenticate()
+  .then((result) => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+User.hasMany(Course);
+Course.belongsTo(User, {
+  foreignKey: 'userId',
+  constraints: true,
+  onDelete: 'CASCADE',
+});
+
+sequelize
+  .sync()
+  .then((result) => {
+    // start listening on our port
+    app.listen(app.get('port'), () => {
+      console.log(`Express server is listening on port...5000`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 // TODO setup your api routes here
+app.use('/', routes);
+app.use('/api/users', userRoutes);
+app.use('/api/courses', courseRoutes);
 
-// setup a friendly greeting for the root route
-app.get('/', async (req, res) => {
-  res.json({
-    message: 'Welcome to the REST API project!',
-  });
-});
+// app.get('/', async (req, res) => {
+//   console.log(typeof Sequelize);
+//   console.log(typeof sequelize.models);
+// });
 
 // send 404 if no other route matched
 app.use((req, res) => {
@@ -42,16 +83,3 @@ app.use((err, req, res, next) => {
     error: {},
   });
 });
-
-// // set our port
-// app.set('port', process.env.PORT || 5000);
-
-// // start listening on our port
-// const server = app.listen(app.get('port'), () => {
-//   console.log(`Express server is listening on port ${server.address().port}`);
-// });
-
-module.exports = app;
-
-// create models
-// create routes index &&
