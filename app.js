@@ -39,7 +39,6 @@ sequelize
 User.hasMany(Course);
 Course.belongsTo(User, {
   foreignKey: 'userId',
-  constraints: true,
   onDelete: 'CASCADE',
 });
 

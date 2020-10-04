@@ -2,8 +2,8 @@
 // Set up the following routes (listed in the format HTTP METHOD Route HTTP Status Code):
 
 // [X] GET /api/courses 200 - Returns a list of courses (including the user that owns each course)
-// [ ] GET /api/courses/:id 200 - Returns the course (including the user that owns the course) for the provided course ID
-// [ ] POST /api/courses 201 - Creates a course, sets the Location header to the URI for the course, and returns no content
+// [X] GET /api/courses/:id 200 - Returns the course (including the user that owns the course) for the provided course ID
+// [X] POST /api/courses 201 - Creates a course, sets the Location header to the URI for the course, and returns no content
 // [ ] PUT /api/courses/:id 204 - Updates a course and returns no content
 // [ ] DELETE /api/courses/:id 204 - Deletes a course and returns no content
 
@@ -45,16 +45,38 @@ router.get('/:id', async (req, res, next) => {
     console.error('Unable to get the course with that :id', error);
   }
 });
-// router.post('/courses', async (req, res, next) => {});
-// router.put('/courses/:id', async (req, res, next) => {
-// Change everyone without a last name to "Doe"
-// await User.update({ lastName: "Doe" }, {
-//   where: {
-//     lastName: null
-//   }
-// });
-// });
-// router.delete('/courses/:id', async (req, res, next) => {
+
+router.post('/', async (req, res, next) => {
+  try {
+    // const id = req.params;
+    const { title, description, estimatedTime, materialsNeeded } = req.body;
+    const course = await Course.create({
+      title,
+      description,
+      estimatedTime,
+      materialsNeeded,
+    });
+    // **location should point to course route with new id
+    // res.location('/').status(201);
+    console.log(course);
+  } catch (error) {
+    console.log('Unable to create course', error);
+  }
+});
+
+router.put('/:id', async (req, res, next) => {
+  // Change everyone without a last name to "Doe"
+  const { id } = req.params;
+
+  const course = await Course.update(req.body, {
+    where: {
+      id: id,
+    },
+  });
+  res.status(204);
+});
+
+// router.delete('/:id', async (req, res, next) => {
 // Delete everyone named "Jane"
 //   await User.destroy({
 //     where: {
