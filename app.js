@@ -26,6 +26,7 @@ app.set('port', process.env.PORT || 5000);
 // setup morgan which gives us http request logging
 app.use(morgan('dev'));
 app.use(bodyParser.json());
+// app.use(express.urlencoded({ extended: false }));
 
 sequelize
   .authenticate()
@@ -36,15 +37,15 @@ sequelize
     console.log(err);
   });
 
-User.hasMany(Course);
-Course.belongsTo(User, {
-  foreignKey: 'userId',
-  onDelete: 'CASCADE',
-});
-
 sequelize
   .sync()
   .then((result) => {
+    // Create Model Associates
+    Course.belongsTo(User, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE',
+    });
+    User.hasMany(Course);
     // start listening on our port
     app.listen(app.get('port'), () => {
       console.log(`Express server is listening on port...5000`);

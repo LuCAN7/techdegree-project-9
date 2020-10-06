@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const sequelize = require('../db');
 
 const Course = sequelize.define(
-  'course',
+  'Course',
   {
     id: {
       type: Sequelize.INTEGER,
@@ -33,12 +33,13 @@ const Course = sequelize.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
-  },
-  {
-    // Other model options go here
-    sequelize, // We need to pass the connection instance
-    modelName: 'Course', // We need to choose the model name
   }
+  // ,
+  // {
+  //   // Other model options go here
+  //   sequelize, // We need to pass the connection instance
+  //   modelName: 'Course', // We need to choose the model name
+  // }
 );
 
 // Course.associate = (models) => {

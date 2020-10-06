@@ -23,7 +23,6 @@ router.get('/', async (req, res, next) => {
     });
     res.json(courses);
     res.status(200);
-    next();
   } catch (error) {
     console.log('Something went wrong!', error);
   }
@@ -48,33 +47,27 @@ router.get('/:id', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    // const id = req.params;
-    const { title, description, estimatedTime, materialsNeeded } = req.body;
-    const course = await Course.create({
-      title,
-      description,
-      estimatedTime,
-      materialsNeeded,
-    });
-    // **location should point to course route with new id
-    // res.location('/').status(201);
-    console.log(course);
+    const course = await Course.create(req.body);
+    // **sets the Location header to the URI for the course,
+    return res.status(201).location('../courses');
+    // console.log(course);
   } catch (error) {
-    console.log('Unable to create course', error);
+    // console.log('Unable to create course', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
-router.put('/:id', async (req, res, next) => {
-  // Change everyone without a last name to "Doe"
-  const { id } = req.params;
+// router.put('/:id', async (req, res, next) => {
+//   // Change everyone without a last name to "Doe"
+//   const { id } = req.params;
 
-  const course = await Course.update(req.body, {
-    where: {
-      id: id,
-    },
-  });
-  res.status(204);
-});
+//   const course = await Course.update(req.body, {
+//     where: {
+//       id: id,
+//     },
+//   });
+//   res.status(204);
+// });
 
 // router.delete('/:id', async (req, res, next) => {
 // Delete everyone named "Jane"
