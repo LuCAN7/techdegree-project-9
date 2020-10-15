@@ -10,20 +10,29 @@ const Course = sequelize.define(
       autoIncrement: true,
       allowNull: true,
     },
-    // userId: {
-    //   type: Sequelize.INTEGER,
-    //   onDelete: 'CASCADE',
-    //   references: {
-    //     model: 'Users',
-    //     key: 'id',
-    //     as: 'userId',
-    //   },
-    // },
     title: {
       type: Sequelize.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'A title is required',
+        },
+        notEmpty: {
+          msg: 'A title is required',
+        },
+      },
     },
     description: {
       type: Sequelize.TEXT,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'A description is required',
+        },
+        notEmpty: {
+          msg: 'A description is required',
+        },
+      },
     },
     estimatedTime: {
       type: Sequelize.STRING,

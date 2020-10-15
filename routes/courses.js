@@ -19,6 +19,7 @@ const User = require('../models/user');
 //       await cb(req, res, next);
 //     } catch (error) {
 //       res.status(500).send(error);
+//       next(error);
 //     }
 //   }
 // }
@@ -58,43 +59,63 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const course = await Course.create(req.body);
+    console.log(course);
 
     // **sets the Location header to the URI for the course,
     return res.status(201).location('../courses');
-    // console.log(course);
   } catch (error) {
-    console.log(error.name);
-
+    // console.log('ERROR:', error.name);
     if (
       error.name === 'SequelizeValidationError' ||
-      error.name === 'SequelizeUniqueConstrain'
+      error.name === 'SequelizeUniqueConstraintError'
     ) {
-      const error = error.errors.map((err) => err.message);
-      res.status(400).json({ errors });
+      const err = error.errors.map((err) => err.message);
+      res.status(400).json(err);
     } else {
-      throw error;
+      next(error);
+      // throw error; // error caught in the asyncHandler's catch block
     }
-
-    // console.log('Unable to create course', error);
-    res.status(500).json({ error: error.message });
   }
 });
 
 router.put('/:id', async (req, res, next) => {
-  // Change everyone without a last name to "Doe"
-  const { id } = req.params;
-
-  const course = await Course.update(req.body, {
-    where: {
-      id: id,
-    },
-    include: [
-      {
-        model: User,
+  try {
+    const { id } = req.params;
+    const course = await Course.update(req.body, {
+      where: {
+        id: id,
       },
-    ],
-  });
-  res.status(204);
+      include: [
+        {
+          model: User,
+        },
+      ],
+    });
+
+    //**Not Working - isnt validating if course :id exist first before updating
+    if (!course) {
+      res.status(404).send('Course not found');
+    }
+
+    //   if (course) {
+    //     const course = await Course.findOne({ where: { id: id } });
+    //   } else {
+    //     throw error;
+    //   }
+
+    res.status(204).send('Course has been updated');
+  } catch (error) {
+    if (
+      error.name === 'SequelizeValidationError' ||
+      error.name === 'SequelizeUniqueConstraintError'
+    ) {
+      const err = error.errors.map((err) => err.message);
+      res.status(400).json(err);
+    } else {
+      next(error);
+      // throw error; // error caught in the asyncHandler's catch block
+    }
+  }
 });
 
 router.delete('/:id', async (req, res, next) => {
