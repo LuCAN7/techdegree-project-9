@@ -12,6 +12,16 @@ const router = express.Router();
 const Course = require('../models/course');
 const User = require('../models/user');
 
+// Aysnc Error Handler to wrap each route
+// function asyncHandler(cb){
+//   return async (req, res, next) =>{
+//     try {
+//       await cb(req, res, next);
+//     } catch (error) {
+//       res.status(500).send(error);
+//     }
+//   }
+// }
 router.get('/', async (req, res, next) => {
   try {
     const courses = await Course.findAll({
@@ -48,34 +58,60 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const course = await Course.create(req.body);
+
     // **sets the Location header to the URI for the course,
     return res.status(201).location('../courses');
     // console.log(course);
   } catch (error) {
+    console.log(error.name);
+
+    if (
+      error.name === 'SequelizeValidationError' ||
+      error.name === 'SequelizeUniqueConstrain'
+    ) {
+      const error = error.errors.map((err) => err.message);
+      res.status(400).json({ errors });
+    } else {
+      throw error;
+    }
+
     // console.log('Unable to create course', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// router.put('/:id', async (req, res, next) => {
-//   // Change everyone without a last name to "Doe"
-//   const { id } = req.params;
+router.put('/:id', async (req, res, next) => {
+  // Change everyone without a last name to "Doe"
+  const { id } = req.params;
 
-//   const course = await Course.update(req.body, {
-//     where: {
-//       id: id,
-//     },
-//   });
-//   res.status(204);
-// });
+  const course = await Course.update(req.body, {
+    where: {
+      id: id,
+    },
+    include: [
+      {
+        model: User,
+      },
+    ],
+  });
+  res.status(204);
+});
 
-// router.delete('/:id', async (req, res, next) => {
-// Delete everyone named "Jane"
-//   await User.destroy({
-//     where: {
-//       firstName: "Jane"
-//     }
-//   });
-// });
+router.delete('/:id', async (req, res, next) => {
+  // Delete everyone named "Jane"
+  const { id } = req.params;
+  const course = await Course.destroy({
+    where: {
+      id: id,
+    },
+    // ,
+    // include: [
+    //   {
+    //     model: User
+    //   }
+    // ]
+  });
+  req.status(204);
+});
 
 module.exports = router;
