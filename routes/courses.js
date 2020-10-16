@@ -13,31 +13,35 @@ const Course = require('../models/course');
 const User = require('../models/user');
 
 // Aysnc Error Handler to wrap each route
-// function asyncHandler(cb){
-//   return async (req, res, next) =>{
-//     try {
-//       await cb(req, res, next);
-//     } catch (error) {
-//       res.status(500).send(error);
-//       next(error);
-//     }
-//   }
-// }
-router.get('/', async (req, res, next) => {
-  try {
-    const courses = await Course.findAll({
-      include: [
-        {
-          model: User,
-        },
-      ],
-    });
-    res.json(courses);
-    res.status(200);
-  } catch (error) {
-    console.log('Something went wrong!', error);
-  }
-});
+function asyncHandler(cb) {
+  return async (req, res, next) => {
+    try {
+      await cb(req, res, next);
+    } catch (error) {
+      res.status(500).send(error);
+      next(error);
+    }
+  };
+}
+
+router.get(
+  '/',
+  asyncHandler(async (req, res, next) => {
+    try {
+      const courses = await Course.findAll({
+        include: [
+          {
+            model: User,
+          },
+        ],
+      });
+      res.json(courses);
+      res.status(200);
+    } catch (error) {
+      console.log('Something went wrong!', error);
+    }
+  })
+);
 
 router.get('/:id', async (req, res, next) => {
   try {
@@ -50,9 +54,13 @@ router.get('/:id', async (req, res, next) => {
         },
       ],
     });
-    console.log(course);
+
+    if (course === null) {
+      console.log('Course Not found!');
+      res.sendStatus(404);
+    }
   } catch (error) {
-    console.error('Unable to get the course with that :id', error);
+    throw error; // error caught in the asyncHandler's catch block
   }
 });
 
@@ -93,8 +101,6 @@ router.put('/:id', async (req, res, next) => {
       ],
     });
 
-    // console.log(typeof course);
-    // console.log(course);
     if (!course) {
       return res.status(404).send('Course not found');
     }

@@ -8,7 +8,12 @@ const Course = sequelize.define(
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-      allowNull: true,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'No course with that id',
+        },
+      },
     },
     title: {
       type: Sequelize.STRING,

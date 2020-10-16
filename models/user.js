@@ -11,7 +11,7 @@ const User = sequelize.define(
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-      allowNull: true,
+      allowNull: false,
     },
     firstName: {
       type: Sequelize.STRING,
