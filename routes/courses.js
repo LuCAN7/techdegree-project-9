@@ -4,8 +4,8 @@
 // [X] GET /api/courses 200 - Returns a list of courses (including the user that owns each course)
 // [X] GET /api/courses/:id 200 - Returns the course (including the user that owns the course) for the provided course ID
 // [X] POST /api/courses 201 - Creates a course, sets the Location header to the URI for the course, and returns no content
-// [ ] PUT /api/courses/:id 204 - Updates a course and returns no content
-// [ ] DELETE /api/courses/:id 204 - Deletes a course and returns no content
+// [X] PUT /api/courses/:id 204 - Updates a course and returns no content
+// [X] DELETE /api/courses/:id 204 - Deletes a course and returns no content
 
 const express = require('express');
 const router = express.Router();
@@ -59,7 +59,7 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const course = await Course.create(req.body);
-    console.log(course);
+    // console.log(course);
 
     // **sets the Location header to the URI for the course,
     return res.status(201).location('../courses');
@@ -81,7 +81,8 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const course = await Course.update(req.body, {
+
+    const [course] = await Course.update(req.body, {
       where: {
         id: id,
       },
@@ -92,16 +93,11 @@ router.put('/:id', async (req, res, next) => {
       ],
     });
 
-    //**Not Working - isnt validating if course :id exist first before updating
+    // console.log(typeof course);
+    // console.log(course);
     if (!course) {
-      res.status(404).send('Course not found');
+      return res.status(404).send('Course not found');
     }
-
-    //   if (course) {
-    //     const course = await Course.findOne({ where: { id: id } });
-    //   } else {
-    //     throw error;
-    //   }
 
     res.status(204).send('Course has been updated');
   } catch (error) {
@@ -113,7 +109,6 @@ router.put('/:id', async (req, res, next) => {
       res.status(400).json(err);
     } else {
       next(error);
-      // throw error; // error caught in the asyncHandler's catch block
     }
   }
 });
