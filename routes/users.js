@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const auth = require('basic-auth');
 const User = require('../models/user');
 
 // Aysnc Error Handler to wrap each route
@@ -15,10 +16,28 @@ const User = require('../models/user');
 //   };
 // }
 
+// function authUser ( req, res, next){
+//   // const auth = (Authorization header set);
+// }
+
 router.get('/', async (req, res, next) => {
   try {
-    const users = await User.findAll();
-    res.json(users).status(200);
+    const { name, pass } = auth(req);
+    // console.log(name, pass);
+    const users = await User.findOne({
+      where: {
+        emailAddress: name,
+      },
+    });
+    if (users) {
+      bcrypt.compare(pass, users.password, function (err, result) {
+        // res === true
+        res.json(users).status(200);
+        console.log(result);
+      });
+    } else {
+      res.status(401).send('User not Found!');
+    }
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
