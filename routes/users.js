@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const sequelize = require('../db');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 // Aysnc Error Handler to wrap each route
@@ -27,15 +27,17 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const { firstName, lastName, emailAddress, password } = req.body;
+    const salt = 10;
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const user = await User.create({
       firstName,
       lastName,
       emailAddress,
-      password,
+      password: hashedPassword,
     });
-    res.location('/');
+    // res.location('/');
     res.json(user).status(201);
-    // console.log({ user });
   } catch (error) {
     if (
       error.name === 'SequelizeValidationError' ||

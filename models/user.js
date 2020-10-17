@@ -42,6 +42,7 @@ const User = sequelize.define(
     },
     password: {
       type: Sequelize.STRING,
+      // type: Sequelize.VIRTUAL,
       allowNull: false,
       validation: {
         notEmpty: {
@@ -49,6 +50,21 @@ const User = sequelize.define(
         },
       },
     },
+    // confirmedPassword: {
+    //   type: Sequelize.STRING,
+    //   allowNull: false,
+    //   set(val) {
+    //     if (val === password) {
+    //       const hashedPassword = bcrypt.hashSync(val, 10);
+    //       setDataValue('confirmedPassword', hashedPassword);
+    //     }
+    //   },
+    //   validate: {
+    //     notNull: {
+    //       msg: 'Both passwords must match'
+    //     }
+    //   }
+    // },
   }
   // ,
   // {
