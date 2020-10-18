@@ -1,12 +1,3 @@
-// Create the course routes
-// Set up the following routes (listed in the format HTTP METHOD Route HTTP Status Code):
-
-// [X] GET /api/courses 200 - Returns a list of courses (including the user that owns each course)
-// [X] GET /api/courses/:id 200 - Returns the course (including the user that owns the course) for the provided course ID
-// [X] POST /api/courses 201 - Creates a course, sets the Location header to the URI for the course, and returns no content
-// [X] PUT /api/courses/:id 204 - Updates a course and returns no content
-// [X] DELETE /api/courses/:id 204 - Deletes a course and returns no content
-
 const express = require('express');
 const router = express.Router();
 const Course = require('../models/course');

@@ -12,6 +12,7 @@ const Course = require('./models/course');
 const routes = require('./routes/index');
 const userRoutes = require('./routes/users');
 const courseRoutes = require('./routes/courses');
+// const authRoute = require('./routes/authRoute');
 
 // variable to enable global error logging
 const enableGlobalErrorLogging =

@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const auth = require('basic-auth');
 const User = require('../models/user');
+const authUser = require('./authRoute');
 
 // Aysnc Error Handler to wrap each route
 // function asyncHandler(cb) {
@@ -16,31 +16,13 @@ const User = require('../models/user');
 //   };
 // }
 
-// function authUser ( req, res, next){
-//   // const auth = (Authorization header set);
-// }
+router.get('/', authUser, (req, res) => {
+  const user = req.currentUser;
 
-router.get('/', async (req, res, next) => {
-  try {
-    const { name, pass } = auth(req);
-    // console.log(name, pass);
-    const users = await User.findOne({
-      where: {
-        emailAddress: name,
-      },
-    });
-    if (users) {
-      bcrypt.compare(pass, users.password, function (err, result) {
-        // res === true
-        res.json(users).status(200);
-        console.log(result);
-      });
-    } else {
-      res.status(401).send('User not Found!');
-    }
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-  }
+  res.status(200).json({
+    login: user.emailAddress,
+    name: user.firstName,
+  });
 });
 
 router.post('/', async (req, res, next) => {
@@ -65,7 +47,6 @@ router.post('/', async (req, res, next) => {
       const errors = error.errors.map((err) => err.message);
       res.status(400).json({ errors });
     } else {
-      // console.error('Unable to create user!', error);
       next(error);
     }
   }
