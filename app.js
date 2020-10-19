@@ -46,7 +46,9 @@ sequelize
       foreignKey: 'userId',
       onDelete: 'CASCADE',
     });
+
     User.hasMany(Course);
+
     // start listening on our port
     app.listen(app.get('port'), () => {
       console.log(`Express server is listening on port...5000`);

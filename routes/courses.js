@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const Course = require('../models/course');
+const bycrpt = require('bcryptjs');
 const User = require('../models/user');
-
+const Course = require('../models/course');
+const authUser = require('../routes/authRoute');
 // Aysnc Error Handler to wrap each route
 function asyncHandler(cb) {
   return async (req, res, next) => {
@@ -55,12 +56,11 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', authUser, async (req, res, next) => {
   try {
-    const course = await Course.create(req.body);
-    // console.log(course);
-
-    // **sets the Location header to the URI for the course,
+    await Course.create(req.body);
+    // const user = req.currentUser;
+    // console.log(user.dataValues.Courses[0]);
     return res.status(201).location('../courses');
   } catch (error) {
     // console.log('ERROR:', error.name);
@@ -77,10 +77,11 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', authUser, async (req, res, next) => {
   try {
     const { id } = req.params;
 
+    // console.log(course);
     const [course] = await Course.update(req.body, {
       where: {
         id: id,
@@ -92,11 +93,13 @@ router.put('/:id', async (req, res, next) => {
       ],
     });
 
-    if (!course) {
+    if (course) {
+      console.log(course);
+
+      res.status(204).send('Course has been updated');
+    } else {
       return res.status(404).send('Course not found');
     }
-
-    res.status(204).send('Course has been updated');
   } catch (error) {
     if (
       error.name === 'SequelizeValidationError' ||
@@ -110,7 +113,7 @@ router.put('/:id', async (req, res, next) => {
   }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', authUser, async (req, res, next) => {
   // Delete everyone named "Jane"
   const { id } = req.params;
   const course = await Course.destroy({
