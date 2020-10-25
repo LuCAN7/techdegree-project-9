@@ -1,9 +1,12 @@
+'use strict';
+
 const express = require('express');
 const router = express.Router();
 const bycrpt = require('bcryptjs');
 const User = require('../models/user');
 const Course = require('../models/course');
 const authUser = require('../routes/authRoute');
+
 // Aysnc Error Handler to wrap each route
 function asyncHandler(cb) {
   return (req, res, next) => {
@@ -57,7 +60,7 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', authUser, async (req, res, next) => {
   try {
     await Course.create(req.body);
-    // const user = req.currentUser;
+    const user = req.currentUser;
     // console.log(user.dataValues.Courses[0]);
     return res.status(201).location('../courses').end();
   } catch (error) {

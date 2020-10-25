@@ -63,11 +63,6 @@ app.use('/', routes);
 app.use('/api/users', userRoutes);
 app.use('/api/courses', courseRoutes);
 
-// app.get('/', async (req, res) => {
-//   console.log(typeof Sequelize);
-//   console.log(typeof sequelize.models);
-// });
-
 // send 404 if no other route matched
 app.use((req, res) => {
   res.status(404).json({
