@@ -28,16 +28,15 @@ const authUser = async (req, res, next) => {
         next();
         // res.status(200).json(user);
       } else {
-        res.status(401).json('Access Denied - User not authenticated!');
+        return res.status(401).json('Access Denied - User not authenticated!');
         // throw Error('User not authenticated!');
       }
     } else {
-      res.status(401).send('Not Found - User not found!');
+      return res.status(402).send('Not Found - User not found!');
     }
   } else {
-    res.status(400).send('Not Authorized - Name and Pass not found!');
-    //   // throw Error('Cannot Authenticate');
-    next();
+    return res.status(400).send('Not Authorized - Name and Pass not found!');
+    // throw Error('Cannot Authenticate');
   }
 };
 

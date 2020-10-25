@@ -6,9 +6,9 @@ const Course = require('../models/course');
 const authUser = require('../routes/authRoute');
 // Aysnc Error Handler to wrap each route
 function asyncHandler(cb) {
-  return async (req, res, next) => {
+  return (req, res, next) => {
     try {
-      await cb(req, res, next);
+      cb(req, res, next);
     } catch (error) {
       res.status(500).send(error);
       next(error);
@@ -27,8 +27,7 @@ router.get(
           },
         ],
       });
-      res.json(courses);
-      res.status(200);
+      return res.status(200).json(courses);
     } catch (error) {
       console.log('Something went wrong!', error);
     }
@@ -46,11 +45,15 @@ router.get('/:id', async (req, res, next) => {
         },
       ],
     });
-
     if (course === null) {
-      console.log('Course Not found!');
-      res.sendStatus(404);
+      console.log('Not found!');
+    } else {
+      console.log(course instanceof Course); // true
+      console.log(course.toJSON()); // 'My Title'
+      res.status(200).json(course);
     }
+
+    // s
   } catch (error) {
     throw error; // error caught in the asyncHandler's catch block
   }
@@ -61,7 +64,7 @@ router.post('/', authUser, async (req, res, next) => {
     await Course.create(req.body);
     // const user = req.currentUser;
     // console.log(user.dataValues.Courses[0]);
-    return res.status(201).location('../courses');
+    return res.status(201).location('../courses').end();
   } catch (error) {
     // console.log('ERROR:', error.name);
     if (
@@ -114,20 +117,16 @@ router.put('/:id', authUser, async (req, res, next) => {
 });
 
 router.delete('/:id', authUser, async (req, res, next) => {
-  // Delete everyone named "Jane"
   const { id } = req.params;
-  const course = await Course.destroy({
-    where: {
-      id: id,
-    },
-    // ,
-    // include: [
-    //   {
-    //     model: User
-    //   }
-    // ]
-  });
-  req.status(204);
+  const course = await Course.findByPk(id);
+
+  if (course) {
+    await Course.destroy({ where: { id: id } });
+    // console.log('DELETED', id);
+    return res.status(204).send('Course was deleted');
+  } else {
+    throw new Error('User not found');
+  }
 });
 
 module.exports = router;

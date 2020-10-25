@@ -37,6 +37,9 @@ router.post('/', async (req, res, next) => {
       emailAddress,
       password: hashedPassword,
     });
+
+    if (emailAddress === user.emailAddress) {
+    }
     // res.location('/');
     res.json(user).status(201);
   } catch (error) {

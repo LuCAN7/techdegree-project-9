@@ -38,17 +38,17 @@ sequelize
     console.log(err);
   });
 
+// Create Model Associates
+Course.belongsTo(User, {
+  foreignKey: 'userId',
+  onDelete: 'CASCADE',
+});
+
+User.hasMany(Course);
+
 sequelize
   .sync()
   .then((result) => {
-    // Create Model Associates
-    Course.belongsTo(User, {
-      foreignKey: 'userId',
-      onDelete: 'CASCADE',
-    });
-
-    User.hasMany(Course);
-
     // start listening on our port
     app.listen(app.get('port'), () => {
       console.log(`Express server is listening on port...5000`);
