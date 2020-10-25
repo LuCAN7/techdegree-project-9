@@ -43,7 +43,8 @@ const authUser = async (req, res, next) => {
       // throw Error('Cannot Authenticate');
     }
   } catch (error) {
-    throw Error('Oops! Something went wrong!');
+    res.status(401).json(error);
+    // throw Error('Oops! Something went wrong!');
   }
 };
 

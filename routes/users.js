@@ -18,43 +18,50 @@ function asyncHandler(cb) {
   };
 }
 
-router.get('/', authUser, (req, res) => {
-  const user = req.currentUser;
-  // console.log(user);
-  res.status(200).json({
-    login: user.emailAddress,
-    name: user.firstName,
-  });
-});
-
-router.post('/', async (req, res, next) => {
-  try {
-    const { firstName, lastName, emailAddress, password } = req.body;
-    const salt = 10;
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const user = await User.create({
-      firstName,
-      lastName,
-      emailAddress,
-      password: hashedPassword,
+router.get(
+  '/',
+  authUser,
+  asyncHandler((req, res) => {
+    const user = req.currentUser;
+    // console.log(user);
+    res.status(200).json({
+      login: user.emailAddress,
+      name: user.firstName,
     });
+  })
+);
 
-    if (emailAddress === user.emailAddress) {
+router.post(
+  '/',
+  asyncHandler(async (req, res, next) => {
+    try {
+      const { firstName, lastName, emailAddress, password } = req.body;
+      const salt = 10;
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const user = await User.create({
+        firstName,
+        lastName,
+        emailAddress,
+        password: hashedPassword,
+      });
+
+      if (emailAddress === user.emailAddress) {
+      }
+      // res.location('/');
+      res.json(user).status(201);
+    } catch (error) {
+      if (
+        error.name === 'SequelizeValidationError' ||
+        error.name === 'SequelizeUniqueConstraintsError'
+      ) {
+        const errors = error.errors.map((err) => err.message);
+        res.status(400).json({ errors });
+      } else {
+        next(error);
+      }
     }
-    // res.location('/');
-    res.json(user).status(201);
-  } catch (error) {
-    if (
-      error.name === 'SequelizeValidationError' ||
-      error.name === 'SequelizeUniqueConstraintsError'
-    ) {
-      const errors = error.errors.map((err) => err.message);
-      res.status(400).json({ errors });
-    } else {
-      next(error);
-    }
-  }
-});
+  })
+);
 
 module.exports = router;
