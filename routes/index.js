@@ -1,5 +1,6 @@
+'use strict';
+
 const express = require('express');
-const Sequelize = require('sequelize');
 const router = express.Router();
 
 // setup a friendly greeting for the root route

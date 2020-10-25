@@ -40,11 +40,9 @@ const authUser = async (req, res, next) => {
       }
     } else {
       return res.status(400).send('Not Authorized - Name and Pass not found!');
-      // throw Error('Cannot Authenticate');
     }
   } catch (error) {
     res.status(401).json(error);
-    // throw Error('Oops! Something went wrong!');
   }
 };
 

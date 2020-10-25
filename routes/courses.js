@@ -60,7 +60,7 @@ router.post(
     try {
       await Course.create(req.body);
       const user = req.currentUser;
-      // console.log(user.dataValues.Courses[0]);
+      // **NEED to rewrite - redirect w/ .location() //;
       return res.status(201).location('../courses').end();
     } catch (error) {
       if (
@@ -82,8 +82,6 @@ router.put(
   asyncHandler(async (req, res, next) => {
     try {
       const { id } = req.params;
-
-      // console.log(course);
       const [course] = await Course.update(req.body, {
         where: {
           id: id,
@@ -96,8 +94,6 @@ router.put(
       });
 
       if (course) {
-        console.log(course);
-
         res.status(204).send('Course has been updated');
       } else {
         return res.status(404).send('Course not found');
