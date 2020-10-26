@@ -37,19 +37,25 @@ router.post(
     try {
       const { firstName, lastName, emailAddress, password } = req.body;
       const salt = 10;
-      const hashedPassword = await bcrypt.hash(password, salt);
 
-      const user = await User.create({
-        firstName,
-        lastName,
-        emailAddress,
-        password: hashedPassword,
+      const user = await User.findOne({
+        where: {
+          emailAddress: emailAddress,
+        },
       });
 
-      if (emailAddress === user.emailAddress) {
+      if (emailAddress !== user.emailAddress) {
+        const hashedPassword = await bcrypt.hash(password, salt);
+        User.build({
+          firstName,
+          lastName,
+          emailAddress,
+          password: hashedPassword,
+        });
+        res.json(user).status(201);
+      } else {
+        res.status(401).send('Email already in use!');
       }
-      // res.location('/');
-      res.json(user).status(201);
     } catch (error) {
       if (
         error.name === 'SequelizeValidationError' ||
