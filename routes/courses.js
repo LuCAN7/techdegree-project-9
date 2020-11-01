@@ -13,7 +13,6 @@ function asyncHandler(cb) {
     try {
       cb(req, res, next);
     } catch (error) {
-      res.status(500).send(error);
       next(error);
     }
   };
@@ -58,10 +57,10 @@ router.post(
   authUser,
   asyncHandler(async (req, res, next) => {
     try {
-      await Course.create(req.body);
+      const course = await Course.create(req.body);
       const user = req.currentUser;
-      // **NEED to rewrite - redirect w/ .location() //;
-      return res.status(201).location('../courses').end();
+
+      return res.status(201).location(`/api/courses/${course.id}`).end();
     } catch (error) {
       if (
         error.name === 'SequelizeValidationError' ||
@@ -82,21 +81,28 @@ router.put(
   asyncHandler(async (req, res, next) => {
     try {
       const { id } = req.params;
-      const [course] = await Course.update(req.body, {
-        where: {
-          id: id,
-        },
-        include: [
-          {
-            model: User,
-          },
-        ],
-      });
+      const course = await Course.findByPk(id);
 
       if (course) {
-        res.status(204).send('Course has been updated');
+        if (req.currentUser.id === course.userId) {
+          await Course.update(req.body, {
+            where: {
+              id: id,
+            },
+            include: [
+              {
+                model: User,
+              },
+            ],
+          });
+          return res.status(204).send('Course has been updated');
+        } else {
+          res
+            .status(403)
+            .send('Cannot Update - Course belongs to another User');
+        }
       } else {
-        return res.status(404).send('Course not found');
+        res.status(404).send('Course not found');
       }
     } catch (error) {
       if (
@@ -120,9 +126,13 @@ router.delete(
     const course = await Course.findByPk(id);
 
     if (course) {
-      await Course.destroy({ where: { id: id } });
-      // console.log('DELETED', id);
-      return res.status(204).send('Course was deleted');
+      if (req.currentUser.id === course.userId) {
+        await Course.destroy({ where: { id: id } });
+
+        return res.status(204).send('Course was deleted');
+      } else {
+        res.status(403).send('Cannot Delete - Course belongs to another User');
+      }
     } else {
       throw new Error('User not found');
     }

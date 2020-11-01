@@ -12,7 +12,6 @@ function asyncHandler(cb) {
     try {
       await cb(req, res, next);
     } catch (error) {
-      res.status(500).send(error);
       next(error);
     }
   };
@@ -36,26 +35,53 @@ router.post(
   asyncHandler(async (req, res, next) => {
     try {
       const { firstName, lastName, emailAddress, password } = req.body;
-      const salt = 10;
 
-      const user = await User.findOne({
-        where: {
-          emailAddress: emailAddress,
-        },
-      });
-
-      if (emailAddress !== user.emailAddress) {
-        const hashedPassword = await bcrypt.hash(password, salt);
-        User.build({
-          firstName,
-          lastName,
-          emailAddress,
-          password: hashedPassword,
+      if (password) {
+        const user = await User.findOne({
+          where: {
+            emailAddress: emailAddress,
+          },
         });
-        res.json(user).status(201);
+        // console.log('USER 1 is -->', user);
+
+        if (user === null) {
+          const hashedPassword = await bcrypt.hash(password, 10);
+
+          await User.create({
+            firstName,
+            lastName,
+            emailAddress,
+            password: hashedPassword,
+          });
+          res.status(201).set('Location', '/').end();
+        } else {
+          res.status(403).send('email already exist');
+        }
       } else {
-        res.status(401).send('Email already in use!');
+        res.send('pasword required');
       }
+
+      // if (user === null) {
+      //   console.log(password);
+      //   if (password !== 'undefinded') {
+      //     const salt = await bcrypt.genSaltSync(10);
+      //     const hashedPassword = await bcrypt.hash(password, 10);
+      //     User.create({
+      //       firstName,
+      //       lastName,
+      //       emailAddress,
+      //       password: hashedPassword,
+      //     });
+      //     res.status(200).send('GOOD');
+      //   } else {
+      //     res.status(400).send('BAD');
+      //   }
+      // } else {
+      //   return res.status(401).send('Email already in exist!');
+      // }
+
+      // res.location('/');
+      // return res.json(user).status(201);
     } catch (error) {
       if (
         error.name === 'SequelizeValidationError' ||
