@@ -60,28 +60,6 @@ router.post(
       } else {
         res.send('pasword required');
       }
-
-      // if (user === null) {
-      //   console.log(password);
-      //   if (password !== 'undefinded') {
-      //     const salt = await bcrypt.genSaltSync(10);
-      //     const hashedPassword = await bcrypt.hash(password, 10);
-      //     User.create({
-      //       firstName,
-      //       lastName,
-      //       emailAddress,
-      //       password: hashedPassword,
-      //     });
-      //     res.status(200).send('GOOD');
-      //   } else {
-      //     res.status(400).send('BAD');
-      //   }
-      // } else {
-      //   return res.status(401).send('Email already in exist!');
-      // }
-
-      // res.location('/');
-      // return res.json(user).status(201);
     } catch (error) {
       if (
         error.name === 'SequelizeValidationError' ||
