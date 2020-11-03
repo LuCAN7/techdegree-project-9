@@ -22,7 +22,7 @@ router.get(
   authUser,
   asyncHandler((req, res) => {
     const user = req.currentUser;
-    // console.log(user);
+
     res.status(200).json({
       login: user.emailAddress,
       name: user.firstName,
@@ -42,7 +42,6 @@ router.post(
             emailAddress: emailAddress,
           },
         });
-        // console.log('USER 1 is -->', user);
 
         if (user === null) {
           const hashedPassword = await bcrypt.hash(password, 10);

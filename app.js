@@ -38,13 +38,12 @@ sequelize
     console.log(err);
   });
 
+User.hasMany(Course);
 // Create Model Associates
 Course.belongsTo(User, {
   foreignKey: 'userId',
   onDelete: 'CASCADE',
 });
-
-User.hasMany(Course);
 
 sequelize
   .sync()
