@@ -95,7 +95,7 @@ router.put(
               },
             ],
           });
-          return res.status(204);
+          return res.status(204).end();
         } else {
           res
             .status(403)
@@ -129,7 +129,7 @@ router.delete(
       if (req.currentUser.id === course.userId) {
         await Course.destroy({ where: { id: id } });
 
-        return res.status(204);
+        return res.status(204).end();
       } else {
         res.status(403).send('Cannot Delete - Course belongs to another User');
       }
