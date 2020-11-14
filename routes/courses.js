@@ -2,7 +2,6 @@
 
 const express = require('express');
 const router = express.Router();
-// const bycrpt = require('bcryptjs');
 const User = require('../models/user');
 const Course = require('../models/course');
 const authUser = require('../routes/authRoute');
@@ -26,6 +25,9 @@ router.get(
         include: [
           {
             model: User,
+            attributes: {
+              exclude: ['password'],
+            },
           },
         ],
       });
@@ -42,8 +44,8 @@ router.get(
     const { id } = req.params;
     const course = await Course.findByPk(id);
 
+    // console.log(course);
     if (course === null) {
-      console.log('Not found!');
       res.status(404).send('Not found!');
     } else {
       // console.log(course.toJSON());

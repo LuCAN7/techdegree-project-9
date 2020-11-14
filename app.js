@@ -31,7 +31,7 @@ app.use(bodyParser.json());
 
 sequelize
   .authenticate()
-  .then((result) => {
+  .then(() => {
     console.log('Connection has been established successfully.');
   })
   .catch((err) => {
@@ -47,7 +47,7 @@ Course.belongsTo(User, {
 
 sequelize
   .sync()
-  .then((result) => {
+  .then(() => {
     // start listening on our port
     app.listen(app.get('port'), () => {
       console.log(`Express server is listening on port...5000`);

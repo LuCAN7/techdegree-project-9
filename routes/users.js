@@ -34,38 +34,27 @@ router.post(
   '/',
   asyncHandler(async (req, res, next) => {
     try {
-      const { firstName, lastName, emailAddress, password } = req.body;
-
+      let { firstName, lastName, emailAddress, password } = req.body;
+      let hashedPassword;
       if (password) {
-        const user = await User.findOne({
-          where: {
-            emailAddress: emailAddress,
-          },
-        });
-
-        if (user === null) {
-          const hashedPassword = await bcrypt.hash(password, 10);
-
-          await User.create({
-            firstName,
-            lastName,
-            emailAddress,
-            password: hashedPassword,
-          });
-          res.status(201).set('Location', '/').end();
-        } else {
-          res.status(403).send('email already exist');
-        }
-      } else {
-        res.send('pasword required');
+        hashedPassword = await bcrypt.hash(password, 10);
       }
+
+      await User.create({
+        firstName,
+        lastName,
+        emailAddress,
+        password: hashedPassword,
+      });
+
+      return res.status(201).set('Location', '/').end();
     } catch (error) {
       if (
         error.name === 'SequelizeValidationError' ||
         error.name === 'SequelizeUniqueConstraintsError'
       ) {
         const errors = error.errors.map((err) => err.message);
-        res.status(400).json({ errors });
+        res.status(400).json({ Errors: errors });
       } else {
         next(error);
       }
